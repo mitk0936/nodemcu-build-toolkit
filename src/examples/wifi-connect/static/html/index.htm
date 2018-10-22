@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<title>Timing widget configuration</title>
+	</head>
+	<style type='text/css'>
+		* {
+			font-family: Arial, sans-serif;
+		}
+		input, label {
+			display: block;
+			padding: 7px;
+			margin: 3px;
+			border: 1px solid #ccc;
+		}
+		label {
+			color: #fff;
+			background-color: #333;
+		}
+		input[type='submit'] {
+			background-color: #fff;
+		}
+
+		fieldset {
+			width: 300px;
+			margin: 0 auto;
+			border: 1px solid #ccc;
+		}
+	</style>
+	<body>
+		<form action='' method='POST' id='config-form'>
+			<fieldset>
+				<legend>Widget configuration</legend>
+				<label>Busses API configuration</label>
+				<input id='lineNumber' type='text' name='lineNumber' placeholder='Line number...' />
+				<input id='stopCode' type='number' name='stopCode' placeholder='Stop code...' />
+
+				<label>WIFI AP configuration</label>
+				<input id='ap_ssidName' type='text' name='ssidName' placeholder='SSID...' />
+				<input id='ap_wifiPass' minlength="8" type='password' name='wifiPass' placeholder='Password' />
+
+				<label>WIFI Connection configuration</label>
+				<input id='ssidName' type='text' name='ssidName' placeholder='SSID...' />
+				<input id='wifiPass' minlength="8" type='password' name='wifiPass' placeholder='Password' />
+				<input type='submit' name='config' value='Submit'>
+			</fieldset>
+		</form>
+		<script type='text/javascript'>
+			var fetch = function (url, data, method, onSuccess, onError) {
+				var xmlHttp = new XMLHttpRequest();
+				
+				xmlHttp.open(method, url);
+				xmlHttp.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+
+				xmlHttp.send(JSON.stringify(data));
+
+				xmlHttp.onreadystatechange = function () {
+					if (xmlHttp.readyState == 4) {
+						xmlHttp.status == 200 ? onSuccess() : onError();
+					}
+				}
+			};
+
+			var handleEmptyFields = function (field) {
+				if (field.length === 0) {
+					return null;
+				} else {
+					return field;
+				}
+			}
+
+			window.onload = function () {
+				var submitting = false;
+
+				document.getElementById('config-form').addEventListener('submit', function (e) {
+					e.preventDefault();
+
+					var ap = {
+						ssid: handleEmptyFields(document.getElementById('ap_ssidName').value),
+						pwd: handleEmptyFields( document.getElementById('ap_wifiPass').value)
+					}, wifi = {
+						ssid: handleEmptyFields(document.getElementById('ssidName').value),
+						pwd: handleEmptyFields(document.getElementById('wifiPass').value)
+					}, timing = {
+						lineNumber: handleEmptyFields(document.getElementById('lineNumber').value),
+						stopCode: handleEmptyFields(document.getElementById('stopCode').value)
+					}
+
+					var data = { }
+
+					ap.ssid && ap.pwd && (data.ap = ap);
+					wifi.ssid && wifi.pwd && (data.wifi = wifi);
+					timing.lineNumber && timing.stopCode && (data.timing = timing);
+
+					!submitting && (submitting = true) && fetch('/config-timing', data, 'POST', function onSuccess (responseText) {
+						submitting = false;
+						alert('Data configured, device will restart now.');
+					}, function onError () {
+						alert('Problem occured, please try again.');
+						window.location.reload();
+					});
+				});
+			};
+		</script>
+	</body>
+</html>

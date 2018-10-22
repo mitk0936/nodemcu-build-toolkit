@@ -1,0 +1,6 @@
+/node_modules
+/package-lock.json
+/src/*
+!/src/examples
+/firmware
+!/firmware/esp_init_data_default.bin

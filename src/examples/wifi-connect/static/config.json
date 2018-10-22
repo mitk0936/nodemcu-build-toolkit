@@ -1,0 +1,14 @@
+{
+	"wifi": {
+		"ssid": "SDV",
+		"pwd": "1133557799"
+	},
+	"ap": {
+		"ssid": "Test",
+		"pwd": "test123456"
+	},
+	"timing": {
+		"lineNumber": "111",
+		"stopCode": "0968"
+	}
+}
