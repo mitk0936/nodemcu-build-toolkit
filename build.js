@@ -131,7 +131,6 @@ cli.command('upload [prodFlag]').action(async (prodFlag) => {
 
   const allFiles = ls(`${scripts}`).reduce((output, filename) => `${output} ${filename}`, '');
   const allStatic = ls(`${static}`).reduce((output, filename) => `${output} ${filename}`);
-  const allLibs = libs.reduce((output, filename) => `${output} ${filename} --remotename lib/${path.basename(filename)}`, '');
   const uploadOptions = generateUploadOptions(uploadConfig);
 
   currentProcess
@@ -140,8 +139,10 @@ cli.command('upload [prodFlag]').action(async (prodFlag) => {
   currentProcess
     .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${allStatic} --port=${port} ${uploadOptions} --keeppath`, { stdio: 'inherit' });
 
-  currentProcess
-    .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${allLibs} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+  libs.forEach((libPath) => {
+    currentProcess
+      .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${libPath} --remotename lib/${path.basename(libPath)} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+  });
 
   currentProcess
     .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload init.lua --port=${port} ${uploadOptions}`, { stdio: 'inherit' });

@@ -1,3 +1,3 @@
-[submodule "src/examples/lib/moon-saga"]
-	path = src/examples/lib/moon-saga
-	url = https://github.com/mitk0936/moon-saga.git
+[submodule "src/examples/sofia-city-transport-timing-widget"]
+	path = src/examples/sofia-city-transport-timing-widget
+	url = git@github.com:mitk0936/sofia-city-transport-timing-widget.git
