@@ -25,7 +25,7 @@ const BOARDS_ADDRESSES = [
 
 const printDebugMessage = (...messages) => console.log('\x1b[31m', [...messages].join('\n'));
 
-const generateUploadOptions = ({ delay = 200, baud = 115200 }) => `--connection-delay ${delay} --baud ${115200}`;
+const generateUploadOptions = ({ connectionDelay = 200, baud = 115200 }) => `--connection-delay ${connectionDelay} --baud ${baud}`;
 
 const findPort = () => new Promise((resolve, reject) => {
   const portsFound = [];
@@ -38,22 +38,37 @@ const findPort = () => new Promise((resolve, reject) => {
 
     ports.forEach((port) => {
       if (port.serialNumber || port.manufacturer) {
-        console.log('Found device on ', port.comName);
-        portsFound.push(port.comName);
+        portsFound.push(port);
       }
     });
 
     switch (portsFound.length) {
       case 1:
-        resolve(portsFound[0]);
+        resolve(portsFound[0].comName);
         break
       case 0:
         printDebugMessage('No connected devices were found.');
         reject();
         break
       default:
-        printDebugMessage('More than one devices were found.');
-        reject();
+        console.log('Select the device you want to work with:');
+        
+        portsFound.forEach((port, index) => {
+          console.log(`${index})`, port.comName, 'Manufacturer', port.manufacturer, 'Serial Number: ', port.serialNumber);
+        });
+
+        prompt.get([{
+          name: 'usb-connected-device-index',
+          required: true
+        }], (err, result) => {
+          if (err) {
+            printDebugMessage('Error with selecting device port.');
+            reject();
+          }
+
+          const selectedIndex = parseInt(result['usb-connected-device-index']);
+          resolve(portsFound[selectedIndex].comName);
+        });
     }
   });
 });
@@ -109,7 +124,7 @@ cli.command('mkfs').action(async () => {
   const port = await findPort();
 
   currentProcess
-    .execSync(`node ${NODEMCU_TOOL} mkfs --port=${port}`, { stdio: 'inherit' });
+    .execSync(`node ${NODEMCU_TOOL} mkfs --port=${port} --connection-delay 500` , { stdio: 'inherit' });
 });
 
 cli.command('upload [prodFlag]').action(async (prodFlag) => {
@@ -127,19 +142,25 @@ cli.command('upload [prodFlag]').action(async (prodFlag) => {
 
   // TODO: validate source
   const { source = {} } = require(uploadConfigPath);
-  const { libs = [], scripts = '', static = '' } = source;
+  const { libs = [], scripts = '', static = null } = source;
 
   const allFiles = ls(`${scripts}`).reduce((output, filename) => `${output} ${filename}`, '');
-  const allStatic = ls(`${static}`).reduce((output, filename) => `${output} ${filename}`);
+  const allStatic = static ? ls(`${static}`).reduce((output, filename) => `${output} ${filename}`) : null;
+  console.log(JSON.stringify(uploadConfig));
+
   const uploadOptions = generateUploadOptions(uploadConfig);
 
   currentProcess
     .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${allFiles} ${compilePrefix} --port=${port} ${uploadOptions} --keeppath`, { stdio: 'inherit' });
   
-  currentProcess
-    .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${allStatic} --port=${port} ${uploadOptions} --keeppath`, { stdio: 'inherit' });
+  if (static) {
+    currentProcess
+      .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${allStatic} --port=${port} ${uploadOptions} --keeppath`, { stdio: 'inherit' });
+  }
 
   libs.forEach((libPath) => {
+    console.log('LIB', libPath);
+
     currentProcess
       .execSync(`node ${NODEMCU_TOOL_RELATIVE_PATH} upload ${libPath} --remotename lib/${path.basename(libPath)} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
   });
