@@ -1,6 +1,3 @@
 [submodule "src/examples/sofia-city-transport-timing-widget"]
 	path = src/examples/sofia-city-transport-timing-widget
 	url = git@github.com:mitk0936/sofia-city-transport-timing-widget.git
-[submodule "src/examples/nrf24-test/nodemcu-nrf24"]
-	path = src/examples/nrf24-test/nodemcu-nrf24
-	url = https://github.com/geomatsi/nodemcu-nrf24.git
