@@ -1,7 +1,6 @@
 /node_modules
 /package-lock.json
-/src/*
-!/src/examples
+/src/___work-in-progress
 /firmware
 !/firmware/esp_init_data_default.bin
 .gitconfig
