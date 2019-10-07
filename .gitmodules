@@ -1,3 +1,6 @@
 [submodule "src/examples/sofia-city-transport-timing-widget"]
 	path = src/examples/sofia-city-transport-timing-widget
 	url = git@github.com:mitk0936/sofia-city-transport-timing-widget.git
+[submodule "src/examples/home-security-device"]
+	path = src/examples/home-security-device
+	url = git@github.com:mitk0936/home-security-device.git
