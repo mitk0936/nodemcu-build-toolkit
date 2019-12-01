@@ -7,7 +7,8 @@ const { selectPort, selectAddress, selectUploadConfig, selectFirmwareBinary } = 
 const { FIRMWARE_ADDRESS, INIT_LUA_NAME } = require('./constants');
 const { printDebugMessage, generateUploadOptions } = require('./utils');
 
-const NODEMCU_TOOL = './node_modules/nodemcu-tool/bin/nodemcu-tool';
+// const NODEMCU_TOOL = './node_modules/nodemcu-tool/bin/nodemcu-tool';
+const NODEMCU_TOOL = './NodeMCU-Tool/bin/nodemcu-tool';
 
 commander.command('mkfs').action(async () => {
   const port = await selectPort();
@@ -39,13 +40,13 @@ commander.command('upload [prodFlag]').action(async (prodFlag) => {
     scripts
   );
 
-  const staticFilesPath = path.join(
+  const staticFilesPath = static && path.join(
     uploadConfigDirName,
     static
   );
   
   const allFiles = ls(scriptsPath);
-  const allStatic = ls(staticFilesPath);
+  const allStatic = static && ls(staticFilesPath);
 
   const initLuaPath = path.join(
     uploadConfigDirName,

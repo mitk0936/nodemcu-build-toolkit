@@ -4,3 +4,6 @@
 [submodule "src/examples/home-security-device"]
 	path = src/examples/home-security-device
 	url = git@github.com:mitk0936/home-security-device.git
+[submodule "src/examples/wifi-counter"]
+	path = src/examples/wifi-counter
+	url = git@github.com:mitk0936/wifi-counter.git

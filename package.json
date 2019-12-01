@@ -23,7 +23,7 @@
   "homepage": "https://github.com/mitk0936/whatever#readme",
   "dependencies": {
     "commander": "^2.19.0",
-    "nodemcu-tool": "^3.0.2",
+    "nodemcu-tool": "2.1.1",
     "prompt": "^1.0.0",
     "serialport": "^7.0.2",
     "shelljs": "^0.8.3"
