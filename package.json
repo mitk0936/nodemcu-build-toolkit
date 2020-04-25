@@ -4,11 +4,11 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "mkfs": "node src/index mkfs",
-    "upload": "node src/index upload",
-    "config": "node src/index config",
-    "start": "node src/index start",
-    "flash": "node src/index flash"
+    "mkfs": "NODE_OPTIONS=--no-warnings node src/index mkfs",
+    "upload": "NODE_OPTIONS=--no-warnings node src/index upload",
+    "config": "NODE_OPTIONS=--no-warnings node src/index config",
+    "start": "NODE_OPTIONS=--no-warnings node src/index start",
+    "flash": "NODE_OPTIONS=--no-warnings node src/index flash"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,9 @@
   "homepage": "https://github.com/mitk0936/whatever#readme",
   "dependencies": {
     "commander": "^2.19.0",
-    "nodemcu-tool": "2.1.1",
+    "nodemcu-tool": "3.2.0",
     "prompt": "^1.0.0",
-    "serialport": "^7.0.2",
+    "serialport": "^8.0.7",
     "shelljs": "^0.8.3"
   }
 }

@@ -7,14 +7,14 @@ const { selectPort, selectAddress, selectUploadConfig, selectFirmwareBinary } = 
 const { FIRMWARE_ADDRESS, INIT_LUA_NAME } = require('./constants');
 const { printDebugMessage, generateUploadOptions } = require('./utils');
 
-// const NODEMCU_TOOL = './node_modules/nodemcu-tool/bin/nodemcu-tool';
-const NODEMCU_TOOL = './NodeMCU-Tool/bin/nodemcu-tool';
+const NODEMCU_TOOL = 'node ./node_modules/nodemcu-tool/bin/nodemcu-tool';
+// const NODEMCU_TOOL = './NodeMCU-Tool/bin/nodemcu-tool';
 
 commander.command('mkfs').action(async () => {
   const port = await selectPort();
 
   childProcess
-    .execSync(`node ${NODEMCU_TOOL} mkfs --port=${port} --connection-delay 500` , { stdio: 'inherit' });
+    .execSync(`${NODEMCU_TOOL} mkfs --port=${port} --connection-delay 500` , { stdio: 'inherit' });
 });
 
 commander.command('upload [prodFlag]').action(async (prodFlag) => {
@@ -59,7 +59,7 @@ commander.command('upload [prodFlag]').action(async (prodFlag) => {
     const fileNameOnDevice = path.relative(uploadConfigDirName, file);
 
     childProcess
-      .execSync(`node ${NODEMCU_TOOL} upload ${file} --remotename ${fileNameOnDevice} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+      .execSync(`${NODEMCU_TOOL} upload ${file} --remotename ${fileNameOnDevice} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
   };
 
   allFiles.forEach((file) => uploadFile(file, compilePrefix));
@@ -75,14 +75,14 @@ commander.command('upload [prodFlag]').action(async (prodFlag) => {
     );
 
     childProcess
-      .execSync(`node ${NODEMCU_TOOL} upload ${lib} --remotename lib/${path.basename(lib)} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+      .execSync(`${NODEMCU_TOOL} upload ${lib} --remotename lib/${path.basename(lib)} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
   });
 
   childProcess
-    .execSync(`node ${NODEMCU_TOOL} upload ${initLuaPath} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+    .execSync(`${NODEMCU_TOOL} upload ${initLuaPath} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
 
   childProcess
-    .execSync(`node ${NODEMCU_TOOL} fsinfo --port=${port}`, { stdio: 'inherit' });
+    .execSync(`${NODEMCU_TOOL} fsinfo --port=${port}`, { stdio: 'inherit' });
 
   printDebugMessage('DONE');
 });
@@ -91,10 +91,10 @@ commander.command('start').action(async () => {
   const port = await selectPort();
 
   childProcess
-    .execSync(`node ${NODEMCU_TOOL} reset --port=${port}`);
+    .execSync(`${NODEMCU_TOOL} reset --port=${port}`);
 
   childProcess
-    .execSync(`node ${NODEMCU_TOOL} terminal --port=${port}`, { stdio: 'inherit' });
+    .execSync(`${NODEMCU_TOOL} terminal --port=${port}`, { stdio: 'inherit' });
 });
 
 commander.command('flash [folder] [mode]').action(async (folder, mode) => {

@@ -8,12 +8,7 @@ const { printDebugMessage } = require('./utils');
 const { ESP_INIT_DATA_ADDRESSES, BOARDS_ADDRESSES, UPLOAD_CONFIG_NAME } = require('./constants');
 
 const selectPort = () => new Promise((resolve, reject) => {
-  serialport.list((err, ports) => {
-    if (err) {
-      printDebugMessage('Error occured with finding connected device on USB port.');
-      reject();
-    }
-
+  serialport.list().then((ports) => {
     const portsFound = ports.filter((port) => Boolean(port.serialNumber || port.manufacturer));
 
     switch (portsFound.length) {
@@ -42,6 +37,9 @@ const selectPort = () => new Promise((resolve, reject) => {
           resolve(portsFound[selectedIndex].comName);
         });
     }
+  }).catch((err) => {
+    printDebugMessage('Error occured with finding connected device on USB port.');
+    reject();
   });
 });
 
