@@ -7,3 +7,6 @@
 [submodule "src/examples/wifi-counter"]
 	path = src/examples/wifi-counter
 	url = git@github.com:mitk0936/wifi-counter.git
+[submodule "src/examples/ble-gps"]
+	path = src/examples/ble-gps
+	url = git@github.com:mitk0936/ble-gps.git
