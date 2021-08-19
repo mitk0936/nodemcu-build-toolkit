@@ -129,7 +129,7 @@ commander.command('flash [folder] [mode]').action(async (folder, mode) => {
 
     childProcess
       .execSync(
-        `esptool.py --port ${port} --before default_reset --baud 115200 write_flash -fm ${flashMode} ${FIRMWARE_ADDRESS} ${selectedBinaryFirmware}`,
+        `esptool --port ${port} --before default_reset --baud 115200 write_flash -fm ${flashMode} ${FIRMWARE_ADDRESS} ${selectedBinaryFirmware}`,
         { stdio: 'inherit' }
       );
   } catch (e) {
