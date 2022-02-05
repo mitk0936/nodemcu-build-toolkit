@@ -5,7 +5,7 @@ const { ls } = require('shelljs');
 
 const { selectPort, selectAddress, selectUploadConfig, selectFirmwareBinary } = require('./user-prompts');
 const { FIRMWARE_ADDRESS, INIT_LUA_NAME } = require('./constants');
-const { printDebugMessage, generateUploadOptions } = require('./utils');
+const { printDebugMessage, generateUploadOptions, execRetry } = require('./utils');
 
 const NODEMCU_TOOL = 'node ./node_modules/nodemcu-tool/bin/nodemcu-tool';
 // const NODEMCU_TOOL = './NodeMCU-Tool/bin/nodemcu-tool';
@@ -44,7 +44,7 @@ commander.command('upload [prodFlag]').action(async (prodFlag) => {
     uploadConfigDirName,
     static
   );
-  
+
   const allFiles = ls(scriptsPath);
   const allStatic = static && ls(staticFilesPath);
 
@@ -58,8 +58,10 @@ commander.command('upload [prodFlag]').action(async (prodFlag) => {
   const uploadFile = (file, compilePrefix = '') => {
     const fileNameOnDevice = path.relative(uploadConfigDirName, file);
 
-    childProcess
+    execRetry(function () {
+      childProcess
       .execSync(`${NODEMCU_TOOL} upload ${file} --remotename ${fileNameOnDevice} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+    });
   };
 
   allFiles.forEach((file) => uploadFile(file, compilePrefix));
@@ -74,16 +76,22 @@ commander.command('upload [prodFlag]').action(async (prodFlag) => {
       libPath
     );
 
-    childProcess
+    execRetry(function () {
+      childProcess
       .execSync(`${NODEMCU_TOOL} upload ${lib} --remotename lib/${path.basename(lib)} ${compilePrefix} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+    });
   });
 
-  childProcess
+
+  execRetry(function () {
+    childProcess
     .execSync(`${NODEMCU_TOOL} upload ${initLuaPath} --port=${port} ${uploadOptions}`, { stdio: 'inherit' });
+  });
 
-  childProcess
+  execRetry(function () {
+    childProcess
     .execSync(`${NODEMCU_TOOL} fsinfo --port=${port}`, { stdio: 'inherit' });
-
+  });
   printDebugMessage('DONE');
 });
 
@@ -129,7 +137,7 @@ commander.command('flash [folder] [mode]').action(async (folder, mode) => {
 
     childProcess
       .execSync(
-        `esptool --port ${port} --before default_reset --baud 115200 write_flash -fm ${flashMode} ${FIRMWARE_ADDRESS} ${selectedBinaryFirmware}`,
+        `esptool.py --chip esp8266 --port ${port} --before default_reset --baud 115200 write_flash -fm ${flashMode} ${FIRMWARE_ADDRESS} ${selectedBinaryFirmware}`,
         { stdio: 'inherit' }
       );
   } catch (e) {
